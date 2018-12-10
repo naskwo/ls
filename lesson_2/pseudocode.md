@@ -41,7 +41,7 @@ SET iterator = 1
 SET strings_concat = empty
 
 WHILE iterator <= size of strings array
-  SET strings_concat += current value of array plus an optional delimiter
+  SET strings_concat += value at current array position plus an optional delimiter
   SET iterator += 1
 
 END
@@ -65,7 +65,6 @@ WHILE iterator <= size of integers
     PRINT current element
   
   SET iterator += 1
-
 
 END
 
