@@ -1,13 +1,28 @@
+require 'pry'
+require 'yaml'
+
+MESSAGES = YAML.load_file('calculator_messages.yml')
+LANGUAGE = 'en'
+
+# binding.pry
+
+def messages(message,lang='en')
+  MESSAGES[lang][message]
+end
+
 def prompt(message)
   Kernel.puts("=> #{message}")
 end
 
 def valid_number?(number)
-  number.to_i != 0
+  # number.to_i != 0
+  # number.match?(/^\d+$/)
+  number.match?(/(^[+-]?(?:0|[1-9]\d*)(?:\.(?:\d*[1-9]|0))?)$/)
 end
 
 def operation_to_message(op)
-  case op
+
+message = case op
   when '1'
     'Adding'
   when '2'
@@ -17,18 +32,17 @@ def operation_to_message(op)
   when '4'
     'Dividing'
   end
+  return message
 end
 
-prompt("Welcome to Calculator!")
-
-prompt("Enter your name:")
+prompt(messages('welcome',LANGUAGE))
 
 name = ''
 loop do
   name = Kernel.gets().chomp()
 
   if name.empty?()
-    prompt("Please enter a valid name.")
+    prompt(messages('valid_name',LANGUAGE))
   else
     break
   end
@@ -40,7 +54,7 @@ loop do
   number1 = ''
 
   loop do
-    prompt("Enter the first number:")
+    prompt(MESSAGES['prompt_first_number'])
     number1 = Kernel.gets().chomp()
 
     if valid_number?(number1)
