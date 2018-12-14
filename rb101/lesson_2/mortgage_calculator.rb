@@ -49,7 +49,7 @@ loop do
 
   apr = ''
   loop do
-    apr = gets.to_i
+    apr = gets.to_f
     break if apr >= 0
     puts ">> Please enter valid APR (e.g. 5.5) or 0 if this is an interest-free loan."
   end
