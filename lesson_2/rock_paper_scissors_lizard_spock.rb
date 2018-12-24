@@ -1,4 +1,4 @@
-require 'pry'
+# require 'pry'
 GAME_OPTIONS = {  "r" => "rock",
                   "p" => "paper",
                   "sc" => "scissors",
