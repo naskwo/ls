@@ -5,6 +5,6 @@ mailing_campaign_leads = [
   {name: 'Ash Patel', email: 'ash_patel@my_mail.com', days_since_login: 22, mailing_list: true}
 ]
 
-p mailing_campaign_leads.map do |lead|
+mailing_campaign_leads.map do |lead|
   lead[:name].capitalize!
 end
