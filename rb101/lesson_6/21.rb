@@ -7,11 +7,15 @@ POINTS =  { 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7,
             :queen => 10, :king => 10, :ace => 11 }
 SEPARATOR = "\n" + ("*" * 60) + "\n\n"
 
-def shuffle_deck
-  instance = SUITS.each_with_object({}) do |suit, deck|
+def new_deck
+  SUITS.each_with_object({}) do |suit, deck|
     deck[suit] = VALUES.clone
   end
-  player = []
+end
+
+def deal_cards
+  instance = new_deck
+  player = [] # Note that this method can be simplified to return one array
   dealer = []
   dealt = 0
 
@@ -100,7 +104,7 @@ end
 loop do
   # Setup
   game_ended = false
-  player_cards, dealer_cards = shuffle_deck
+  player_cards, dealer_cards = deal_cards
   player = []
   dealer = []
   player_action = nil
@@ -162,7 +166,7 @@ loop do
       dealer_values = card_values(dealer)
       player_values = card_values(player)
 
-      dealer_points = card_points(dealer_values)
+      dealer_points = card_points(dealer_values) # TODO: refactor memoization
       player_points = card_points(player_values)
 
       prompt ">> Dealer takes a card."
