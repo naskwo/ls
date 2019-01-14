@@ -1,6 +1,6 @@
 require 'pry'
 
-PLAYERS = [:human,:computer]
+PLAYERS = [:human, :computer]
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
@@ -55,12 +55,11 @@ end
 
 def find_square(line, board, marker)
   if board.values_at(*line).count(marker) == 2
-    board.select{|k,v| line.include?(k) && v == INITIAL_MARKER}.keys.first
+    board.select{ |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   else
     nil
   end
 end
-
 
 def place_piece!(brd, player)
   if player == 'human'
@@ -76,7 +75,7 @@ def place_piece!(brd, player)
 
     brd[square] = PLAYER_MARKER
   else
-   square = nil
+    square = nil
 
     # Offense
     WINNING_LINES.each do |line|
@@ -137,7 +136,7 @@ def alternate_player(current_player)
   current_player == 'human' ? 'computer' : 'human'
 end
 
-wins = {"player" => 0, "computer" => 0}
+wins = { "player" => 0, "computer" => 0 }
 
 prompt "Who should start? You (y), Computer (c) or Random (r)?"
 input = gets.chomp
@@ -145,10 +144,10 @@ start_choice = input.downcase
 
 loop do
   board = initialize_board
-
-  if start_choice == 'y'
+  case start_choice
+  when 'y'
     current_player = PLAYERS[0].to_s
-  elsif start_choice == 'r'
+  when 'r'
     current_player = PLAYERS.sample.to_s
   else
     current_player = PLAYERS[1].to_s
@@ -162,31 +161,6 @@ loop do
     current_player = alternate_player(current_player)
     break if someone_won?(board) || board_full?(board)
   end
-
-  # if player_order == 1
-  #   # binding.pry
-  #   loop do
-  #     computer_places_piece! board
-  #     break if someone_won?(board) || board_full?(board)
-
-  #     display_board board
-
-
-  #     player_places_piece! board
-  #     break if someone_won?(board) || board_full?(board)
-  #   end
-  # else
-  #   loop do
-  #     display_board board
-  #     prompt "(Score: you: #{wins['player']}, computer: #{wins['computer']})"
-
-  #     player_places_piece! board
-  #     break if someone_won?(board) || board_full?(board)
-
-  #     computer_places_piece! board
-  #     break if someone_won?(board) || board_full?(board)
-  #   end
-  # end
 
   display_board board
 
@@ -202,7 +176,7 @@ loop do
     prompt "Play again? (y or n)"
     answer = gets.chomp
     break unless answer.downcase.start_with?('y')
-    wins = {"player" => 0, "computer" => 0}
+    wins = { "player" => 0, "computer" => 0 }
     prompt "Who should start? You (y), Computer (c) or Random (r)?"
     input = gets.chomp
     start_choice = input.downcase
