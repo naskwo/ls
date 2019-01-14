@@ -1,5 +1,3 @@
-require 'pry'
-
 SUITS =   [:hearts, :diamonds, :clubs, :spades]
 VALUES =  [2, 3, 4, 5, 6, 7, 8, 9, 10, :jack, :queen, :king, :ace]
 POINTS =  { 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7,
@@ -47,7 +45,6 @@ end
 
 def card_values(cards)
   cards.each_with_object([]) { |card, arr| arr << card.values }.flatten
-  # binding.pry
 end
 
 def card_points(card_values)
@@ -111,7 +108,6 @@ loop do
   dealer << get_card(dealer_cards)
   player << get_card(player_cards)
   player << get_card(player_cards)
-  # binding.pry
 
   system 'clear'
   prompt SEPARATOR
