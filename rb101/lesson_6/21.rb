@@ -6,17 +6,13 @@ POINTS =  { 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7,
 SEPARATOR = "\n" + ("*" * 60) + "\n\n"
 
 def new_deck
-  SUITS.each_with_object({}) do |suit, deck|
-    deck[suit] = VALUES.clone
+  SUITS.shuffle.each_with_object({}) do |suit, deck|
+    deck[suit] = VALUES.clone.shuffle
   end
 end
 
-def deal_cards
+def deal_card
   instance = new_deck
-  player = [] # Note that this method can be simplified to return one array
-  dealer = []
-  dealt = 0
-
   while instance.values.flatten.count > 0
     suit = SUITS.sample
     cards_left_in_suit = instance[suit]
@@ -24,19 +20,11 @@ def deal_cards
     if cards_left_in_suit.count > 0
       random_card_index = (0..cards_left_in_suit.count).to_a.sample - 1 # OBOE!
       card = { suit => cards_left_in_suit.slice!(random_card_index) }
-
-      if dealt.even?
-        player << card
-      else
-        dealer << card
-      end
-
-      dealt += 1
     else
       next
     end
   end
-  [player, dealer]
+  card
 end
 
 def get_card(cards)
@@ -51,22 +39,23 @@ def card_points(card_values)
   sum = 0
   # Sort cards so :ace is last
   card_values.sort! { |a, b| POINTS[a] <=> POINTS[b] }
+  # Special scoring rule for aces
   card_values.each do |card|
-    if card == :ace
-      sum += sum < 12 ? 11 : 1
-    else
-      sum += POINTS[card]
-    end
+    sum +=  if card == :ace
+              sum < 12 ? 11 : 1
+            else
+              POINTS[card]
+            end
   end
   sum
 end
 
 def winner?(card_values)
-  !!(card_points(card_values) == 21)
+  card_points(card_values) == 21
 end
 
 def busted?(card_values)
-  !!(card_points(card_values) > 21)
+  card_points(card_values) > 21
 end
 
 def prompt(message)
@@ -101,13 +90,14 @@ end
 loop do
   # Setup
   game_ended = false
-  player_cards, dealer_cards = deal_cards
+  quit_game = false
+  player_action = nil
+
   player = []
   dealer = []
-  player_action = nil
-  dealer << get_card(dealer_cards)
-  player << get_card(player_cards)
-  player << get_card(player_cards)
+  dealer << deal_card
+  player << deal_card
+  player << deal_card # player starts with 2 cards
 
   system 'clear'
   prompt SEPARATOR
@@ -144,7 +134,7 @@ loop do
     if player_action == 'h'
       system 'clear'
       prompt "Hit me! You got a new card..."
-      player << get_card(player_cards)
+      player << deal_card
     end
 
     if player_action == 's'
@@ -157,7 +147,7 @@ loop do
   unless game_ended
     loop do
       system 'clear'
-      dealer << get_card(player_cards)
+      dealer << deal_card
 
       dealer_values = card_values(dealer)
       player_values = card_values(player)
@@ -181,11 +171,14 @@ loop do
       if dealer_points >= 17
         prompt ">> Dealer stays."
         if dealer_points < player_points
-          prompt "You have a higher score (#{player_points}) than the dealer (#{dealer_points}). YOU WIN!"
+          prompt "You have a higher score (#{player_points}) than " \
+                 "the dealer (#{dealer_points}). YOU WIN!"
         elsif dealer_points == player_points
-          prompt "You and the dealer each have #{player_points} points. It's a tie!"
+          prompt "You and the dealer each have #{player_points} points." \
+                 "It's a tie!"
         else
-          prompt "The dealer has a higher score (#{dealer_points}) than you (#{player_points}). Dealer wins."
+          prompt "The dealer has a higher score (#{dealer_points}) than " \
+                  "you (#{player_points}). Dealer wins."
         end
         break
       end
@@ -193,8 +186,18 @@ loop do
   end
 
   prompt SEPARATOR
-  prompt "Play again (y) or quit (q)"
-  break unless gets.chomp.downcase.start_with? "y"
+  loop do
+    prompt "Play again (y) or quit (q)"
+
+    choice = gets.chomp.downcase[0]
+
+    next unless ['y', 'q'].include? choice
+
+    quit_game = (choice == 'q')
+
+    break
+  end
+  break if quit_game
 end
 
 prompt "Thank you for playing. Goodbye."

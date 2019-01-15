@@ -6,19 +6,13 @@ POINTS =  { 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7,
 SEPARATOR = "\n" + ("*" * 60) + "\n\n"
 
 def new_deck
-  SUITS.each_with_object({}) do |suit, deck|
-    deck[suit] = VALUES.clone
+  SUITS.shuffle.each_with_object({}) do |suit, deck|
+    deck[suit] = VALUES.clone.shuffle
   end
 end
 
-p new_deck
-
-def deal_cards
+def deal_card
   instance = new_deck
-  player = [] # Note that this method can be simplified to return one array
-  dealer = []
-  dealt = 0
-
   while instance.values.flatten.count > 0
     suit = SUITS.sample
     cards_left_in_suit = instance[suit]
@@ -26,22 +20,11 @@ def deal_cards
     if cards_left_in_suit.count > 0
       random_card_index = (0..cards_left_in_suit.count).to_a.sample - 1 # OBOE!
       card = { suit => cards_left_in_suit.slice!(random_card_index) }
-
-      if dealt.even?
-        player << card
-      else
-        dealer << card
-      end
-
-      dealt += 1
     else
       next
     end
   end
-  [player, dealer]
+  card
 end
 
-player,dealer = deal_cards
-
-# p player.shift
-# p dealer.shift
+p deal_card
