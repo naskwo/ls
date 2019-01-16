@@ -6,33 +6,19 @@ POINTS =  { 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7,
 SEPARATOR = "\n" + ("*" * 60) + "\n\n"
 
 def new_deck
-  SUITS.shuffle.each_with_object({}) do |suit, deck|
-    deck[suit] = VALUES.clone.shuffle
-  end
+  SUITS.product(VALUES).shuffle
 end
 
-def deal_card
-  instance = new_deck
-  while instance.values.flatten.count > 0
-    suit = SUITS.sample
-    cards_left_in_suit = instance[suit]
-
-    if cards_left_in_suit.count > 0
-      random_card_index = (0..cards_left_in_suit.count).to_a.sample - 1 # OBOE!
-      card = { suit => cards_left_in_suit.slice!(random_card_index) }
-    else
-      next
-    end
-  end
-  card
-end
-
-def get_card(cards)
-  cards.shift
+def deal_card(deck)
+  deck.pop
 end
 
 def card_values(cards)
-  cards.each_with_object([]) { |card, arr| arr << card.values }.flatten
+  arr = []
+  cards.each do |card|
+    arr << card[1]
+  end
+  arr
 end
 
 def card_points(card_values)
@@ -64,7 +50,7 @@ end
 
 def card_names(cards)
   arr = []
-  cards.each { |hash| hash.each { |k, v| arr << "#{v} of #{k}" } }
+  cards.each { |card| arr << "#{card[1]} of #{card[0].to_s}" }
   arr
 end
 
@@ -89,15 +75,16 @@ end
 # Master loop
 loop do
   # Setup
+  deck = new_deck
   game_ended = false
   quit_game = false
   player_action = nil
 
   player = []
   dealer = []
-  dealer << deal_card
-  player << deal_card
-  player << deal_card # player starts with 2 cards
+  dealer << deal_card(deck)
+  player << deal_card(deck)
+  player << deal_card(deck) # player starts with 2 cards
 
   system 'clear'
   prompt SEPARATOR
@@ -106,9 +93,6 @@ loop do
 
   # Player's turn
   loop do
-    # Convert to array for easier scoring
-    # This "hack" is because of my choice of the initial data structure
-    # of the deck
     player_values = card_values(player)
     output_status(dealer, player)
     prompt ""
@@ -134,7 +118,7 @@ loop do
     if player_action == 'h'
       system 'clear'
       prompt "Hit me! You got a new card..."
-      player << deal_card
+      player << deal_card(deck)
     end
 
     if player_action == 's'
@@ -147,7 +131,7 @@ loop do
   unless game_ended
     loop do
       system 'clear'
-      dealer << deal_card
+      dealer << deal_card(deck)
 
       dealer_values = card_values(dealer)
       player_values = card_values(player)
