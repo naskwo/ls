@@ -50,7 +50,7 @@ end
 
 def card_names(cards)
   arr = []
-  cards.each { |card| arr << "#{card[1]} of #{card[0].to_s}" }
+  cards.each { |card| arr << "#{card[1]} of #{card[0]}" }
   arr
 end
 
