@@ -23,15 +23,15 @@ end
 
 def card_points(card_values)
   sum = 0
-  # Sort cards so :ace is last
-  card_values.sort! { |a, b| POINTS[a] <=> POINTS[b] }
-  # Special scoring rule for aces
+
   card_values.each do |card|
-    sum +=  if card == :ace
-              sum < 12 ? 11 : 1
-            else
-              POINTS[card]
-            end
+    sum += POINTS[card]
+  end
+
+  card_values.each do |card|
+    if sum > 21
+      sum -= 10 if card == :ace
+    end
   end
   sum
 end
