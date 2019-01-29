@@ -2,7 +2,20 @@ GLYPH = '*'
 SPACE = ' '
 
 def print_row(length, stars)
-  print (GLYPH * stars).center(length)
+  middle = (length/2.0).floor
+  offset = stars/2
+  arr_output = Array.new(length,SPACE)
+  arr_output.map!.with_index do |_,i|
+
+    if stars == 1 && i == middle
+      GLYPH
+    elsif stars > 1 && ( i == middle - offset || i == middle + offset )
+      GLYPH
+    else
+      SPACE
+    end
+  end
+  print arr_output.join
 end
 
 def print_diamond(size)
